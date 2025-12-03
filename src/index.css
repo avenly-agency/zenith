@@ -2,20 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Twardy reset */
 body {
-  @apply bg-primary text-text-main antialiased;
+  @apply bg-primary text-text-main antialiased selection:bg-brand selection:text-white;
 }
-/* ...poprzedni kod... */
 
-/* Płynne przewijanie całej strony */
+/* USUNĘLIŚMY scroll-behavior: smooth - teraz domyślnie jest instant */
 html {
-  scroll-behavior: smooth;
-  /* To jest KLUCZOWE: Robi margines przy scrollowaniu do kotwicy (#id) */
-  /* Dzięki temu Navbar nie zasłania nagłówka sekcji */
   scroll-padding-top: 100px;
 }
 
-/* Ukrywanie paska przewijania, gdy menu mobilne jest otwarte */
-.overflow-hidden {
-  overflow: hidden;
+/* Scrollbar (opcjonalne) */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

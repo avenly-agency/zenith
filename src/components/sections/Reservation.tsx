@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, Users, Clock, CheckCircle, ChevronDown } from 'lucide-react';
 
-// --- CUSTOM SELECT (Poprawiona wysokość) ---
+// --- KOMPONENT CUSTOM SELECT (Bez zmian) ---
 interface CustomSelectProps {
   label: string;
   value: string;
@@ -51,7 +51,6 @@ const CustomSelect = ({ label, value, options, onChange, icon: Icon }: CustomSel
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            // POPRAWKA: Zmieniamy max-h-60 na max-h-48 (mniejsza wysokość)
             className="absolute top-full left-0 right-0 mt-2 bg-secondary border border-white/10 rounded-lg shadow-xl z-50 overflow-hidden max-h-48 overflow-y-auto"
           >
             {options.map((option) => (
@@ -108,23 +107,34 @@ export const Reservation = () => {
   const guestOptions = ["1 osoba", "2 osoby", "3 osoby", "4 osoby", "5 osób", "6 osób (VIP Room)"];
 
   return (
-    // POPRAWKA: Usunięto 'overflow-hidden' z głównej sekcji
-    // Dzięki temu Dropdown może wystawać poza jej granice na dół
-    <section className="py-20 relative" id="reservation">
+    // Dodano overflow-hidden, żeby elementy tła nie wystawały
+    <section className="py-24 relative bg-transparent overflow-hidden" id="reservation">
       
-      {/* TŁO Z SEPARACJĄ */}
-      {/* Przeniesiono overflow-hidden tutaj, żeby tło nie robiło problemów, a Dropdown był bezpieczny */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <img 
-          src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2000&auto=format&fit=crop" 
-          alt="Restaurant Interior" 
-          className="w-full h-full object-cover opacity-20"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/90 to-transparent"></div>
-      </div>
+      {/* --- NOWE ELEMENTY TŁA --- */}
+      
+      {/* 1. Cyber Siatka (Grid Pattern) - Tworzy techniczne tło */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
 
+      {/* 2. Czerwony Glow pod formularzem - Skupia uwagę */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand/5 rounded-full blur-[120px] -z-10" />
+
+      {/* 3. Pływające, animowane okręgi - Dodają życia */}
+      <motion.div 
+        animate={{ y: [0, -20, 0], opacity: [0.2, 0.5, 0.2] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-10 right-[5%] w-64 h-64 border border-brand/10 rounded-full blur-[1px] pointer-events-none" 
+      />
+      <motion.div 
+        animate={{ y: [0, 30, 0], opacity: [0.1, 0.3, 0.1] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+        className="absolute bottom-10 left-[5%] w-48 h-48 border border-accent/10 rounded-full blur-[1px] pointer-events-none" 
+      />
+
+      {/* --- TREŚĆ SEKCJI --- */}
       <div className="container mx-auto px-6 relative z-10">
-        <div className="max-w-4xl mx-auto bg-secondary/30 backdrop-blur-lg border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl">
+        
+        {/* Formularz (Modal) - Bez zmian, tylko delikatnie podbity cień */}
+        <div className="max-w-4xl mx-auto bg-secondary/30 backdrop-blur-lg border border-white/10 rounded-3xl p-8 md:p-12 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
           
           {!isSubmitted ? (
             <motion.div
