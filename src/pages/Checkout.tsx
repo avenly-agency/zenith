@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "../context/CartContext";
-import { ArrowLeft, CreditCard, Lock, Loader2, Banknote, Smartphone, AlertCircle } from "lucide-react";
+// ZMIANA: Usunięto 'Lock' z importu
+import { ArrowLeft, CreditCard, Loader2, Banknote, Smartphone, AlertCircle } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { AnimatedPrice } from "../components/ui/AnimatedPrice";
 
@@ -12,38 +13,33 @@ export const Checkout = () => {
   const [status, setStatus] = useState<'idle' | 'processing' | 'success'>('idle');
   const [paymentMethod, setPaymentMethod] = useState<string>('card');
 
-  // --- STANY FORMULARZA ---
+  // Dane formularza
   const [formData, setFormData] = useState({
-    firstName: '', lastName: '', address: '', zip: '', city: '', phone: '+48 ' // Domyślny prefiks
+    firstName: '', lastName: '', address: '', zip: '', city: '', phone: '+48 '
   });
 
   const [blikCode, setBlikCode] = useState('');
   const [cardData, setCardData] = useState({ number: '', expiry: '', cvc: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // --- FORMATTERY (AUTO-DOPASOWANIE) ---
+  // ... (RESZTA KODU BEZ ZMIAN - FORMATTERY, HANDLERY, WALIDACJA) ...
   
+  // Skopiuj resztę pliku z poprzedniego kroku, pamiętając tylko o usunięciu 'Lock' z góry.
+  // Poniżej wklejam brakujące funkcje dla kompletności, żebyś mógł skopiować całość:
+
   const formatZip = (value: string) => {
-    // Usuwamy wszystko co nie jest cyfrą
     const digits = value.replace(/\D/g, '');
-    // Jeśli mamy więcej niż 2 cyfry, wstawiamy myślnik
-    if (digits.length > 2) {
-      return `${digits.slice(0, 2)}-${digits.slice(2, 5)}`;
-    }
+    if (digits.length > 2) return `${digits.slice(0, 2)}-${digits.slice(2, 5)}`;
     return digits;
   };
 
   const formatPhone = (value: string) => {
-    // Pozwalamy na wpisywanie tylko cyfr i plusa na początku
-    // Ale dla uproszczenia formatowania zróbmy proste grupowanie
-    if (!value.startsWith('+48 ')) return value; // Jeśli użytkownik skasuje prefiks, nie formatujemy na siłę
-    
+    if (!value.startsWith('+48 ')) return value;
     const raw = value.replace('+48 ', '').replace(/\D/g, '');
     let formatted = '+48 ';
     if (raw.length > 0) formatted += raw.slice(0, 3);
     if (raw.length > 3) formatted += ' ' + raw.slice(3, 6);
     if (raw.length > 6) formatted += ' ' + raw.slice(6, 9);
-    
     return formatted;
   };
 
@@ -55,30 +51,21 @@ export const Checkout = () => {
     for (let i = 0, len = match.length; i < len; i += 4) {
       parts.push(match.substring(i, i + 4));
     }
-    if (parts.length) {
-      return parts.join(" ");
-    }
+    if (parts.length) return parts.join(" ");
     return value;
   };
 
   const formatExpiry = (value: string) => {
     const digits = value.replace(/\D/g, '');
-    if (digits.length >= 2) {
-      return `${digits.slice(0, 2)}/${digits.slice(2, 4)}`;
-    }
+    if (digits.length >= 2) return `${digits.slice(0, 2)}/${digits.slice(2, 4)}`;
     return digits;
   };
-
-  // --- HANDLERS ---
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     let formattedValue = value;
-
-    // Aplikujemy formatowanie zależnie od pola
     if (name === 'zip') formattedValue = formatZip(value);
     if (name === 'phone') formattedValue = formatPhone(value);
-
     setFormData(prev => ({ ...prev, [name]: formattedValue }));
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
   };
@@ -86,11 +73,9 @@ export const Checkout = () => {
   const handleCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     let formattedValue = value;
-
     if (name === 'number') formattedValue = formatCardNumber(value);
     if (name === 'expiry') formattedValue = formatExpiry(value);
-    if (name === 'cvc') formattedValue = value.replace(/\D/g, '').slice(0, 3); // Tylko cyfry, max 3
-
+    if (name === 'cvc') formattedValue = value.replace(/\D/g, '').slice(0, 3);
     setCardData(prev => ({ ...prev, [name]: formattedValue }));
   };
 
@@ -99,14 +84,13 @@ export const Checkout = () => {
     setBlikCode(val);
   };
 
-  // --- WALIDACJA (REGEX) ---
   const validate = () => {
     const newErrors: Record<string, string> = {};
     const patterns = {
       zip: /^[0-9]{2}-[0-9]{3}$/,
-      phone: /^\+48\s\d{3}\s\d{3}\s\d{3}$/, // Oczekujemy formatu: +48 123 456 789
+      phone: /^\+48\s\d{3}\s\d{3}\s\d{3}$/,
       name: /^.{3,}$/,
-      card: /^[\d\s]{19}$/, // 16 cyfr + 3 spacje
+      card: /^[\d\s]{19}$/,
       cvc: /^[0-9]{3}$/,
       expiry: /^(0[1-9]|1[0-2])\/[0-9]{2}$/
     };
@@ -116,7 +100,6 @@ export const Checkout = () => {
     if (formData.address.length < 5) newErrors.address = "Podaj pełny adres";
     if (!patterns.zip.test(formData.zip)) newErrors.zip = "Wymagany format: 00-000";
     if (formData.city.length < 3) newErrors.city = "Wpisz poprawne miasto";
-    // Walidacja telefonu (uproszczona: min 9 cyfr po prefiksie)
     if (formData.phone.replace(/\D/g, '').length < 11) newErrors.phone = "Błędny numer";
 
     if (paymentMethod === 'blik' && blikCode.length !== 6) newErrors.blik = "Kod musi mieć 6 cyfr";
@@ -154,11 +137,7 @@ export const Checkout = () => {
       <h1 className="text-4xl font-bold mb-12">Finalizacja Zamówienia</h1>
 
       <div className="grid lg:grid-cols-2 gap-12">
-        
-        {/* LEWA STRONA: FORMULARZ */}
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
-            
-            {/* DANE OSOBOWE */}
             <div className="bg-secondary/30 border border-white/10 p-8 rounded-2xl backdrop-blur-md">
                 <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                     <span className="w-8 h-8 rounded-full bg-brand text-white flex items-center justify-center text-sm">1</span>
@@ -181,7 +160,6 @@ export const Checkout = () => {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            {/* ZIP CODE Z FORMATOWANIEM */}
                             <input name="zip" value={formData.zip} onChange={handleInputChange} type="text" placeholder="Kod (00-000)" maxLength={6} className={`w-full bg-black/40 border rounded-lg px-4 py-3 focus:border-brand outline-none transition-colors ${errors.zip ? 'border-red-500' : 'border-white/10'}`} />
                             <ErrorMsg field="zip" />
                         </div>
@@ -191,14 +169,12 @@ export const Checkout = () => {
                         </div>
                     </div>
                     <div>
-                        {/* TELEFON Z FORMATOWANIEM */}
                         <input name="phone" value={formData.phone} onChange={handleInputChange} type="tel" placeholder="Telefon" maxLength={15} className={`w-full bg-black/40 border rounded-lg px-4 py-3 focus:border-brand outline-none transition-colors ${errors.phone ? 'border-red-500' : 'border-white/10'}`} />
                         <ErrorMsg field="phone" />
                     </div>
                 </div>
             </div>
 
-            {/* PŁATNOŚĆ */}
             <div className="bg-secondary/30 border border-white/10 p-8 rounded-2xl backdrop-blur-md">
                 <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                     <span className="w-8 h-8 rounded-full bg-brand text-white flex items-center justify-center text-sm">2</span>
@@ -221,7 +197,7 @@ export const Checkout = () => {
                     {paymentMethod === 'card' && (
                         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
                             <div>
-                                <input name="number" value={cardData.number} onChange={handleCardChange} maxLength={19} type="text" placeholder="Numer Karty" className={`w-full bg-black/40 border rounded-lg px-4 py-3 focus:border-brand outline-none ${errors.cardNumber ? 'border-red-500' : 'border-white/10'}`} />
+                                <input name="number" value={cardData.number} onChange={handleCardChange} maxLength={19} type="text" placeholder="Numer Karty (16 cyfr)" className={`w-full bg-black/40 border rounded-lg px-4 py-3 focus:border-brand outline-none ${errors.cardNumber ? 'border-red-500' : 'border-white/10'}`} />
                                 <ErrorMsg field="cardNumber" />
                             </div>
                             <div className="grid grid-cols-2 gap-4">
@@ -258,17 +234,13 @@ export const Checkout = () => {
             </button>
         </motion.div>
 
-        {/* PRAWA STRONA: PODSUMOWANIE */}
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="h-fit bg-[#0a0a0a] border border-white/10 p-8 rounded-2xl shadow-2xl sticky top-32">
             <h3 className="text-xl font-bold mb-6 border-b border-white/10 pb-4">Podsumowanie</h3>
-            
-            {/* FIX UTYKAJĄCEGO BADGE'A: Dodano 'pt-4 pl-2', żeby badge miał miejsce */}
             <div className="space-y-4 mb-6 max-h-[400px] overflow-y-auto pr-2 pt-4 pl-2 custom-scrollbar">
                 {items.map(item => (
                     <div key={item.id} className="flex gap-4 items-center">
                         <div className="relative shrink-0">
                             <img src={item.image} alt={item.name} className="w-16 h-16 rounded-md object-cover" />
-                            {/* Badge bez zmian, ale teraz kontener ma padding */}
                             <span className="absolute -top-2 -right-2 bg-white text-black text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#0a0a0a]">
                                 {item.quantity}
                             </span>
@@ -280,14 +252,12 @@ export const Checkout = () => {
                     </div>
                 ))}
             </div>
-
             <div className="space-y-3 border-t border-white/10 pt-4 text-sm">
                 <div className="flex justify-between text-text-muted"><span>Wartość koszyka</span><AnimatedPrice value={totalPrice} /></div>
                 <div className="flex justify-between text-text-muted"><span>Dostawa</span><span>0 PLN</span></div>
                 <div className="flex justify-between text-xl font-bold pt-4 border-t border-white/10 mt-2"><span>Do zapłaty</span><span className="text-brand"><AnimatedPrice value={totalPrice} /></span></div>
             </div>
         </motion.div>
-
       </div>
 
       <AnimatePresence>
@@ -306,7 +276,6 @@ export const Checkout = () => {
             </motion.div>
         )}
       </AnimatePresence>
-
     </div>
   );
 };

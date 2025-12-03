@@ -10,7 +10,7 @@ export const Hero = () => {
     offset: ["start start", "end start"]
   });
 
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+  // USUNIĘTO: const backgroundY = ... (nieużywana)
   const textOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
   return (
@@ -27,7 +27,6 @@ export const Hero = () => {
       >
         
         {/* LEWA KOLUMNA: TEKST */}
-        {/* USUNIĘTO: 'order-2 md:order-1' - teraz tekst naturalnie jest pierwszy (góra na mobile, lewo na desktop) */}
         <div className="text-left">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -79,7 +78,6 @@ export const Hero = () => {
         </div>
 
         {/* PRAWA KOLUMNA: ZDJĘCIE */}
-        {/* USUNIĘTO: 'order-1 md:order-2' - teraz zdjęcie naturalnie jest drugie (dół na mobile, prawo na desktop) */}
         <motion.div 
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -88,8 +86,6 @@ export const Hero = () => {
         >
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-brand/20 blur-[60px] rounded-full" />
             
-            {/* KONTENER ZDJĘCIA */}
-            {/* ZMIANA: lg:max-w-full (wcześniej 550px) - pozwala zdjęciu urosnąć na dużych ekranach */}
             <div className="relative w-full max-w-[320px] sm:max-w-[400px] md:max-w-[450px] lg:max-w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500">
                 <img 
                     src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=1000&auto=format&fit=crop" 
