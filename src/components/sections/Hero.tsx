@@ -1,32 +1,31 @@
 import { ArrowRight } from 'lucide-react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
+import { motion } from 'framer-motion';
+// USUNIĘTO: importy useScroll, useTransform, useRef nie są już potrzebne
 
 export const Hero = () => {
-  const ref = useRef(null);
-
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"]
-  });
-
-  // USUNIĘTO: const backgroundY = ... (nieużywana)
-  const textOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  // USUNIĘTO: Całą logikę scrollowania (ref, useScroll, useTransform)
 
   return (
     <section 
-      ref={ref} 
+      // USUNIĘTO: ref={ref}
       className="relative min-h-screen flex items-center py-20 md:py-32 overflow-hidden bg-transparent" 
       id="hero"
     >
       
+      {/* TŁO (Teraz statyczne) */}
+      {/* ZMIANA: Zmieniono motion.div na zwykły div i usunięto style={{ y: backgroundY }} */}
+      <div className="absolute inset-0 z-0">
+         <div className="absolute inset-0 bg-gradient-to-b from-primary via-primary/90 to-secondary" />
+         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-brand/20 blur-[120px] rounded-full" />
+      </div>
+
       {/* GŁÓWNY KONTENER */}
+      {/* ZMIANA: Usunięto style={{ opacity: textOpacity }} - tekst nie znika już przy scrollowaniu */}
       <motion.div 
-        style={{ opacity: textOpacity }} 
         className="container mx-auto px-6 grid md:grid-cols-2 gap-8 md:gap-12 items-center relative z-10"
       >
         
-        {/* LEWA KOLUMNA: TEKST */}
+        {/* LEWA KOLUMNA: TEKST (Animacje wejścia pozostają bez zmian) */}
         <div className="text-left">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -77,7 +76,7 @@ export const Hero = () => {
           </motion.div>
         </div>
 
-        {/* PRAWA KOLUMNA: ZDJĘCIE */}
+        {/* PRAWA KOLUMNA: ZDJĘCIE (Animacja wejścia pozostaje bez zmian) */}
         <motion.div 
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
