@@ -1,20 +1,18 @@
 import { useState, useEffect } from 'react';
 import { ShoppingBag, Menu, X } from 'lucide-react';
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion'; // <--- Dodajemy hooki scrolla
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false); // <--- Nowy stan: czy przewinięto?
+  const [isScrolled, setIsScrolled] = useState(false);
   
   const location = useLocation();
   const navigate = useNavigate();
   const { toggleCart, itemsCount } = useCart();
-  const { scrollY } = useScroll(); // <--- Hook śledzący pozycję scrolla
+  const { scrollY } = useScroll();
 
-  // LOGIKA SCROLLA
-  // useMotionValueEvent nasłuchuje zmian w scrollu bez renderowania co piksel
   useMotionValueEvent(scrollY, "change", (latest) => {
     if (latest > 50) {
       setIsScrolled(true);
@@ -23,10 +21,11 @@ export const Navbar = () => {
     }
   });
 
+  // TWOJE LINKI (Mieszane: ID sekcji i Ścieżki URL)
   const LINKS = [
     { name: "O NAS", target: "about" },
     { name: "MENU", target: "menu" },
-    { name: "REZERWACJA", target: "reservation" },
+    { name: "HISTORIA", target: "/story" }, // <--- To jest podstrona
   ];
 
   useEffect(() => {
@@ -37,15 +36,25 @@ export const Navbar = () => {
     }
   }, [isOpen]);
 
-  const handleNavigation = (targetId: string) => {
+  // --- NAPRAWIONA LOGIKA NAWIGACJI ---
+  const handleNavigation = (target: string) => {
     setIsOpen(false);
+
+    // 1. Jeśli target zaczyna się od "/", to jest to nowa podstrona (np. /story)
+    if (target.startsWith('/')) {
+        navigate(target);
+        return; // Kończymy funkcję, nie szukamy ID
+    }
+
+    // 2. Jeśli to nie ścieżka, to traktujemy jako ID sekcji (Scroll)
     if (location.pathname === '/') {
-      const element = document.getElementById(targetId);
+      const element = document.getElementById(target);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
       }
     } else {
-      navigate(`/#${targetId}`);
+      // Jeśli jesteśmy na innej podstronie, wracamy na główną z hashem
+      navigate(`/#${target}`);
     }
   };
 
@@ -59,18 +68,13 @@ export const Navbar = () => {
 
   return (
     <>
-      {/* NAVBAR Z WARUNKOWYMI KLASAMI 
-          - transition-all duration-300: zapewnia płynne przejście kolorów
-          - py-4 vs py-3: możemy też lekko zmniejszyć padding po scrollu dla lepszego efektu
-      */}
       <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 border-b ${
         isScrolled 
-          ? "bg-primary/80 backdrop-blur-md border-white/10 py-5 shadow-lg" // Styl po scrollu (Solid/Glass)
-          : "bg-transparent border-transparent py-5" // Styl na górze (Przezroczysty, większy padding)
+          ? "bg-primary/80 backdrop-blur-md border-white/10 py-3 shadow-lg" 
+          : "bg-transparent border-transparent py-5"
       }`}>
-        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+        <div className="container mx-auto px-6 flex justify-between items-center">
           
-          {/* LOGO */}
           <button onClick={handleLogoClick} className="flex items-center gap-2 cursor-pointer group">
               <div className="w-8 h-8 bg-brand rounded-full blur-[10px] absolute opacity-50 group-hover:opacity-100 transition-opacity"></div>
               <span className="relative text-2xl font-bold tracking-widest text-text-main">
@@ -78,7 +82,6 @@ export const Navbar = () => {
               </span>
           </button>
 
-          {/* MENU DESKTOPOWE */}
           <ul className="hidden md:flex gap-8 text-sm font-medium text-text-muted">
               {LINKS.map((link) => (
                 <li key={link.name}>
@@ -92,7 +95,6 @@ export const Navbar = () => {
               ))}
           </ul>
 
-          {/* ACTIONS & KOSZYK */}
           <div className="flex items-center gap-6">
               
               <button 
@@ -133,7 +135,6 @@ export const Navbar = () => {
         </div>
       </nav>
 
-      {/* MOBILE MENU */}
       <AnimatePresence>
         {isOpen && (
           <motion.div

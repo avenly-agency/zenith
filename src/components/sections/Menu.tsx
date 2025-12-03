@@ -32,13 +32,22 @@ export const Menu = () => {
   return (
     <section className="py-20 md:py-24 bg-transparent relative overflow-hidden" id="menu">
       
-      {/* TŁO DEKORACYJNE */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-brand/5 rounded-full blur-[150px] -z-10" />
+      {/* --- NOWE TŁO "ETHERAL MIST" --- */}
+      
+      {/* 1. Szum (Noise) - Daje teksturę premium */}
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5 pointer-events-none" />
+
+      {/* 2. Czerwony Głęboki Glow (Środek) */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] h-[90%] bg-brand/5 rounded-full blur-[120px] -z-10" />
+
+      {/* 3. Złoty Akcent (Góra-Prawo) - Łamie monotonię */}
+      <div className="absolute top-0 right-0 w-[40%] h-[40%] bg-accent/5 rounded-full blur-[100px] -z-10 translate-x-1/3 -translate-y-1/3" />
+
+      {/* 4. Zimny Akcent (Dół-Lewo) - Kontrast */}
+      <div className="absolute bottom-0 left-0 w-[40%] h-[40%] bg-blue-500/5 rounded-full blur-[100px] -z-10 -translate-x-1/3 translate-y-1/3" />
 
       <div className="container mx-auto px-4 md:px-6 relative z-10">
         
-        {/* NAGŁÓWEK */}
         <div className="text-center mb-12 md:mb-16">
             <span className="text-accent tracking-widest text-xs md:text-sm uppercase font-bold">
                 Odkryj Nasze Smaki
@@ -49,7 +58,6 @@ export const Menu = () => {
             <div className="w-24 h-1 bg-brand mx-auto rounded-full"></div>
         </div>
 
-        {/* FILTRY (Przewijane poziomo na mobile) */}
         <div className="flex overflow-x-auto pb-4 md:pb-0 md:flex-wrap justify-start md:justify-center gap-3 md:gap-4 mb-8 md:mb-12 no-scrollbar px-2">
             {CATEGORIES.map((cat) => (
                 <button
@@ -66,7 +74,6 @@ export const Menu = () => {
             ))}
         </div>
 
-        {/* GRID PRODUKTÓW */}
         <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             <AnimatePresence mode='popLayout'>
                 {filteredItems.map((item) => (
@@ -77,23 +84,19 @@ export const Menu = () => {
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.9 }}
                         transition={{ duration: 0.3 }}
-                        // ZMIANA: Na mobile bg jest solidne (#080808), na desktopie półprzezroczyste
-                        className="bg-[#080808] border border-white/10 md:bg-[#1a1a1a]/60 md:backdrop-blur-md rounded-2xl overflow-hidden hover:border-accent/30 transition-colors group cursor-pointer flex flex-col h-full shadow-lg"
+                        className="bg-[#050505] border border-white/10 md:bg-[#1a1a1a]/60 md:backdrop-blur-md rounded-2xl overflow-hidden hover:border-accent/30 transition-colors group cursor-pointer flex flex-col h-full shadow-lg"
                     >
-                        {/* ZDJĘCIE */}
                         <div className="h-56 md:h-64 overflow-hidden relative flex-shrink-0">
                             <img 
                                 src={item.image} 
                                 alt={item.name} 
                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                             />
-                            {/* Cena wyraźniejsza */}
                             <div className="absolute top-3 right-3 bg-black/80 backdrop-blur-md border border-white/10 px-3 py-1 rounded-lg text-accent font-bold text-sm shadow-xl">
                                 {item.price}
                             </div>
                         </div>
 
-                        {/* TREŚĆ */}
                         <div className="p-5 md:p-6 flex flex-col flex-1">
                             <div className="flex justify-between items-start mb-2">
                                 <h3 className="text-lg md:text-xl font-bold text-text-main group-hover:text-brand transition-colors">
@@ -105,7 +108,6 @@ export const Menu = () => {
                                 {item.desc}
                             </p>
                             
-                            {/* PRZYCISK */}
                             <div className="mt-auto">
                                 <button 
                                     onClick={(e) => {

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, Users, Clock, CheckCircle, ChevronDown } from 'lucide-react';
 
-// --- KOMPONENT CUSTOM SELECT (Bez zmian) ---
+// ... (Kod CustomSelect BEZ ZMIAN - skopiuj go z poprzedniej wersji) ...
 interface CustomSelectProps {
   label: string;
   value: string;
@@ -33,7 +33,7 @@ const CustomSelect = ({ label, value, options, onChange, icon: Icon }: CustomSel
       
       <div 
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full bg-primary/50 border rounded-lg px-4 py-3 text-white cursor-pointer flex justify-between items-center transition-all ${
+        className={`w-full bg-black/40 border rounded-lg px-4 py-3 text-white cursor-pointer flex justify-between items-center transition-all ${
           isOpen ? 'border-brand ring-1 ring-brand' : 'border-white/10 hover:border-white/30'
         }`}
       >
@@ -51,7 +51,7 @@ const CustomSelect = ({ label, value, options, onChange, icon: Icon }: CustomSel
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-full left-0 right-0 mt-2 bg-secondary border border-white/10 rounded-lg shadow-xl z-50 overflow-hidden max-h-48 overflow-y-auto"
+            className="absolute top-full left-0 right-0 mt-2 bg-[#151515] border border-white/10 rounded-lg shadow-xl z-50 overflow-hidden max-h-48 overflow-y-auto"
           >
             {options.map((option) => (
               <div
@@ -79,14 +79,7 @@ const CustomSelect = ({ label, value, options, onChange, icon: Icon }: CustomSel
 // --- GŁÓWNY KOMPONENT ---
 
 export const Reservation = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    date: '',
-    guests: '',
-    time: ''
-  });
-
+  const [formData, setFormData] = useState({ name: '', email: '', date: '', guests: '', time: '' });
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,34 +100,32 @@ export const Reservation = () => {
   const guestOptions = ["1 osoba", "2 osoby", "3 osoby", "4 osoby", "5 osób", "6 osób (VIP Room)"];
 
   return (
-    // Dodano overflow-hidden, żeby elementy tła nie wystawały
-    <section className="py-24 relative bg-transparent overflow-hidden" id="reservation">
+    <section className="py-20 md:py-24 relative bg-transparent overflow-hidden" id="reservation">
       
-      {/* --- NOWE ELEMENTY TŁA --- */}
+      {/* --- NOWE TŁO (Spójne z Menu, ale odwrócone strony) --- */}
       
-      {/* 1. Cyber Siatka (Grid Pattern) - Tworzy techniczne tło */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
+      {/* 1. Szum */}
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5 pointer-events-none" />
 
-      {/* 2. Czerwony Glow pod formularzem - Skupia uwagę */}
+      {/* 2. Czerwony Głęboki Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand/5 rounded-full blur-[120px] -z-10" />
 
-      {/* 3. Pływające, animowane okręgi - Dodają życia */}
+      {/* 3. Animowane Plamy (Tylko desktop) */}
       <motion.div 
-        animate={{ y: [0, -20, 0], opacity: [0.2, 0.5, 0.2] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-10 right-[5%] w-64 h-64 border border-brand/10 rounded-full blur-[1px] pointer-events-none" 
+        animate={{ y: [0, -30, 0], opacity: [0.2, 0.4, 0.2] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        className="hidden md:block absolute top-0 left-0 w-[40%] h-[40%] bg-accent/5 rounded-full blur-[100px] -z-10 -translate-x-1/4 -translate-y-1/4"
       />
       <motion.div 
-        animate={{ y: [0, 30, 0], opacity: [0.1, 0.3, 0.1] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        className="absolute bottom-10 left-[5%] w-48 h-48 border border-accent/10 rounded-full blur-[1px] pointer-events-none" 
+        animate={{ y: [0, 40, 0], opacity: [0.1, 0.3, 0.1] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+        className="hidden md:block absolute bottom-0 right-0 w-[40%] h-[40%] bg-brand/5 rounded-full blur-[100px] -z-10 translate-x-1/4 translate-y-1/4"
       />
 
-      {/* --- TREŚĆ SEKCJI --- */}
-      <div className="container mx-auto px-6 relative z-10">
+      <div className="container mx-auto px-4 md:px-6 relative z-10">
         
-        {/* Formularz (Modal) - Bez zmian, tylko delikatnie podbity cień */}
-        <div className="max-w-4xl mx-auto bg-secondary/30 backdrop-blur-lg border border-white/10 rounded-3xl p-8 md:p-12 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+        {/* KONTENER FORMULARZA (Solid mobile / Glass desktop) */}
+        <div className="max-w-4xl mx-auto bg-[#050505] md:bg-secondary/30 md:backdrop-blur-lg border border-white/10 rounded-3xl p-6 md:p-12 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
           
           {!isSubmitted ? (
             <motion.div
@@ -142,14 +133,14 @@ export const Reservation = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
             >
-              <div className="text-center mb-10">
-                <h2 className="text-3xl md:text-4xl font-bold mb-4">Zarezerwuj Stolik</h2>
-                <p className="text-text-muted">Doświadcz kulinarnych emocji. Ilość miejsc ograniczona.</p>
+              <div className="text-center mb-8 md:mb-10">
+                <h2 className="text-2xl md:text-4xl font-bold mb-4">Zarezerwuj Stolik</h2>
+                <p className="text-text-muted text-sm md:text-base">Doświadcz kulinarnych emocji. Ilość miejsc ograniczona.</p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
                 
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid md:grid-cols-2 gap-5 md:gap-6">
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-text-muted ml-1">Imię i Nazwisko</label>
                     <input 
@@ -159,7 +150,7 @@ export const Reservation = () => {
                       value={formData.name}
                       onChange={handleChange}
                       placeholder="Jan Kowalski"
-                      className="w-full bg-primary/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all"
+                      className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all"
                     />
                   </div>
                   <div className="space-y-2">
@@ -171,12 +162,12 @@ export const Reservation = () => {
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="jan@example.com"
-                      className="w-full bg-primary/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all"
+                      className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all"
                     />
                   </div>
                 </div>
 
-                <div className="grid md:grid-cols-3 gap-6">
+                <div className="grid md:grid-cols-3 gap-5 md:gap-6">
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-text-muted ml-1 flex items-center gap-2">
                         <Calendar size={14} /> Data
@@ -187,7 +178,7 @@ export const Reservation = () => {
                       required
                       value={formData.date}
                       onChange={handleChange}
-                      className="w-full bg-primary/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand transition-all [color-scheme:dark]"
+                      className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand transition-all [color-scheme:dark]"
                     />
                   </div>
 
@@ -210,7 +201,7 @@ export const Reservation = () => {
 
                 <button 
                   type="submit" 
-                  className="w-full bg-brand hover:bg-red-600 text-white font-bold py-4 rounded-lg shadow-lg hover:shadow-red-900/20 transition-all transform hover:-translate-y-1"
+                  className="w-full bg-brand hover:bg-red-600 text-white font-bold py-4 rounded-lg shadow-lg hover:shadow-red-900/20 transition-all transform hover:-translate-y-1 mt-4"
                 >
                   POTWIERDŹ REZERWACJĘ
                 </button>
