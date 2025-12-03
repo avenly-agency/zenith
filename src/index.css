@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-primary text-text-main antialiased;
+}
+/* ...poprzedni kod... */
+
+/* Płynne przewijanie całej strony */
+html {
+  scroll-behavior: smooth;
+  /* To jest KLUCZOWE: Robi margines przy scrollowaniu do kotwicy (#id) */
+  /* Dzięki temu Navbar nie zasłania nagłówka sekcji */
+  scroll-padding-top: 100px;
+}
+
+/* Ukrywanie paska przewijania, gdy menu mobilne jest otwarte */
+.overflow-hidden {
+  overflow: hidden;
+}
